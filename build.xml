@@ -144,7 +144,7 @@
       <fileset dir="${pwfiles.path}" includes="*"/>
       <fileset dir="${build.unjar.dir}"/>	    
     </jar>  
-    <chmod file="${build.dist.dir}/seqcode.${pwset}.jar}" perm="755"/>
+    <chmod file="${build.dist.dir}encodedream.${pwset}.jar}" perm="755"/>
   </target>
 
 
