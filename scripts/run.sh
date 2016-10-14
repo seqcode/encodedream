@@ -9,11 +9,36 @@
 #
 #################################################################################################################################################
 
+## Note:
+## To run the Java code below, the encodedream and seqcode-core jar files should be added to your Java CLASSPATH.
+
+
+############################# General training features
+
+###### Calling DNase-seq domains
+binw=200;
+bins=100;
+params="bw"$binw"_bs"$bins;
+mkdir $params;
+java -Xmx60G org.seqcode.projects.seed.DomainFinder --threads 4 --species "Homo sapiens;hg19" --design data/designByCellLine/$name --peakfinding max --binwidth $binw --binstep $bins --poisslogpthres -5 --binpthres 0.05 --out $params/${name/.design/} >$params/${name/.design/.out}
+
+###### Generate normalized DNase tag count data
+win=600; ##Tested win=100,200,400,600,800,1000
+java -Xmx60G org.seqcode.lab.shaun.IndexedTagCounts --species "Homo sapiens;hg19" --design data/designByCellLine/$name --coords test_coord_index.txt --win $win --out $out".tagcounts" >>$out".out" 2>&1
+
+###### Table of window-to-closest-TSS distances
+##Convert all TSSs in all transcripts (Downloaded GENCODE annotation from http://www.gencodegenes.org/releases/19.html)
+perl scripts/gff2strandedpointTSS.pl gencode.v19.annotation.gff3 0 >gencode.v19.annotation.tss
+##Compare window centers to TSSs ("test_coord_index.txt" contains the list of 60,519,747 test coordinates defined by the challenge)
+perl scripts/coordPointDistances.pl test_coord_index.txt gencode.v19.annotation.tss >test-coord-tss-distances.txt
+
+
+
 ############################# C1 classifier
 
 
 ###### Extract k-mers from cis-bp PWMs (Done only for factors with no PBM data)
-python kmerfromPWM.py "motif.pwm" > "primaryMotifKmers.list"
+python scripts/kmerfromPWM.py "motif.pwm" > "primaryMotifKmers.list"
 
 ###### Map primary motifs to wild-card k-mer space
 java org.seqcode.projects.encodedream.utils.MapToWCspace --kmers "primaryMotifKmers.list" > "primaryMotifWCKmers.list"
@@ -38,7 +63,7 @@ spark-submit --class org.seqcode.lab.akshay.encodedreme.classifiers.SparkL1 --ma
 ############################# C2 classifier
 
 ###### Make train data
-python createPositive.py "test-train_celltype table" > "C2.labels"
+python scripts/createPositive.py "test-train_celltype table" > "C2.labels"
 
 ###### Count 4 to 6 mers at train sites
 java -Xmx30G org.seqcode.lab.akshay.dreme.GenerateKmerLIBSVM --species "Homo sapiens;hg19" --seq ~/group/genomes/hg19/ --minK 4 --maxK 6 --win 200 --exclude "primaryMotifWCKmers.list" --trainbed "C2.labels" > "C2_train.libsvm"
@@ -61,7 +86,7 @@ java org.seqcode.lab.akshay.encodedreme.utils.ToTestIndex --species "Homo sapien
 ## Now filter domains that are within 10kbp of TSSs
 java org.seqcode.lab.akshay.encodedreme.utils.FilterDNaseDomains --species "Homo sapiens;hg19" --seq ~/group/genomes/hg19/ --domains "DNaseDomains_testIndices.tab" --summits --tss "gencode.v19.annotation.tss" --tssExclude 10000 > "DNaseDomains_tssFiltered_testIndices.tab"
 ## Generate seed regions for training C3
-perl generateSeeds.pl "C1.score" "CellType DNase Domain" 20000 0.8 3 >  "C3_train.labels"
+perl scripts/generateSeeds.pl "C1.score" "CellType DNase Domain" 20000 0.8 3 >  "C3_train.labels"
 
 ##### Make train data 
 java -Xmx30G org.seqcode.lab.akshay.dreme.GenerateKmerLIBSVM --species "Homo sapiens;hg19" --seq ~/group/genomes/hg19/ --minK 4 --maxK 6 --win 200 --exclude "primaryMotifWCKmers.list" --trainbed "C3_train.labels" > "C3_train.libsvm"
