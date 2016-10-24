@@ -81,7 +81,7 @@ public class GenerateWCKmerLIBSVM {
 			String[] pieces = line.split("\t");
 			Region currReg = null;
 			if(pieces[0].contains("-")){
-				rparser.execute(pieces[0]);
+				currReg = rparser.execute(pieces[0]);
 			}else{
 				currReg = pparser.execute(pieces[0]).expand(win/2);
 			}
