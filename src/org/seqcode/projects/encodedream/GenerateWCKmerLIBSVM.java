@@ -18,6 +18,7 @@ import org.seqcode.genome.location.Region;
 import org.seqcode.genome.sequence.SequenceGenerator;
 import org.seqcode.genome.sequence.SequenceUtils;
 import org.seqcode.genome.sequence.WildcardKmerUtils;
+import org.seqcode.gsebricks.verbs.location.PointParser;
 import org.seqcode.gsebricks.verbs.location.RegionParser;
 import org.seqcode.gseutils.ArgParser;
 import org.seqcode.gseutils.Args;
@@ -29,12 +30,15 @@ public class GenerateWCKmerLIBSVM {
 	protected SequenceGenerator<Region> seqgen;
 	protected String reg_bed_file;
 	protected WildcardKmerUtils wcutils;
-	protected RegionParser rpaser;
+	protected RegionParser rparser;
+	protected PointParser pparser;
 	protected List<String> labels = new ArrayList<String>();
 	protected Map<Integer,Integer> exclude_inds = new HashMap<Integer,Integer>();
+	protected int win=200;
 	
 	// Settors
 	public void setK(int k) throws IOException{K = k;wcutils = new WildcardKmerUtils(K);}
+	public void setWin(int w){win=w;}
 	public void setRegsFileName(String s){reg_bed_file =s;}
 	public void setLabels(String fname) throws IOException{
 		BufferedReader br = new BufferedReader(new FileReader(fname));
@@ -63,7 +67,8 @@ public class GenerateWCKmerLIBSVM {
 	public GenerateWCKmerLIBSVM(GenomeConfig g) {
 		gcon = g;
 		seqgen = gcon.getSequenceGenerator();
-		rpaser = new RegionParser(gcon.getGenome());
+		rparser = new RegionParser(gcon.getGenome());
+		pparser = new PointParser(gcon.getGenome());
 	}
 	
 	public void execute() throws IOException{
@@ -74,7 +79,12 @@ public class GenerateWCKmerLIBSVM {
 		while((line = br.readLine()) != null){
 			int[] kmerCounts = new int[numK];
 			String[] pieces = line.split("\t");
-			Region currReg = rpaser.execute(pieces[0]);
+			Region currReg = null;
+			if(pieces[0].contains("-")){
+				rparser.execute(pieces[0]);
+			}else{
+				currReg = pparser.execute(pieces[0]).expand(win/2);
+			}
 			String seq = seqgen.execute(currReg).toUpperCase();
 			
 			for (int i = 0; i < (seq.length() - K + 1); i++) {
@@ -114,6 +124,7 @@ public class GenerateWCKmerLIBSVM {
 		GenomeConfig g = new GenomeConfig(args);
 		GenerateWCKmerLIBSVM runner = new GenerateWCKmerLIBSVM(g);
 		runner.setK(Args.parseInteger(args, "K", 8));
+		runner.setWin(Args.parseInteger(args, "win", 200));
 		
 		runner.setLabels(ap.getKeyValue("trainreg"));
 		runner.setRegsFileName(ap.getKeyValue("trainreg"));
