@@ -28,7 +28,7 @@ public class TextIndexUtils {
 	protected boolean randomSubset = false; // extracts a random subset; when doing this excludes regions from "regions"
 	protected int numRand = 100000;
 	protected boolean fullSet = false; // print all the test set; treating the "regions" as positive and everything else as "U"
-	protected static final int numCharsInRecord = 801;
+	protected static final int numCharsInRecord = 804;
 	protected static final int NUM_TEST = 60519747;
 	protected static final int TEST_JUMP_MAX = 600;
 	protected Random ran = new Random();
@@ -92,6 +92,8 @@ public class TextIndexUtils {
 			inputRegsIndex.put(currtestInd, closestMidPoint.expand(100).getLocationString());
 		}
 		
+		System.err.println(regions.size()+" mapped to "+inputRegsIndex.keySet().size()+" unique test regions!!");
+		
 		// Now roll down the list and print the output file
 		int ind =0;
 		BufferedReader br = new BufferedReader(new FileReader(onehotFname));
@@ -118,7 +120,7 @@ public class TextIndexUtils {
 				if(inputRegsIndex.containsKey(ind)){
 					String[] outString=line.split("");
 					System.out.print(StringUtils.join(outString, ","));
-					System.out.println("1");
+					System.out.println(",1");
 				}
 				ind++;
 			}
@@ -127,11 +129,11 @@ public class TextIndexUtils {
 				if(inputRegsIndex.containsKey(ind)){
 					String[] outString=line.split("");
 					System.out.print(StringUtils.join(outString, ","));
-					System.out.println("1");
+					System.out.println(",1");
 				}else{
 					String[] outString=line.split("");
 					System.out.print(StringUtils.join(outString, ","));
-					System.out.println("0");
+					System.out.println(",0");
 				}
 				ind++;
 			}
