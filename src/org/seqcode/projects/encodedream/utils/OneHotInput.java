@@ -54,9 +54,9 @@ public class OneHotInput {
 			Region reg = rparser.execute(s);
 			String seq = seqgen.execute(reg).toUpperCase();
 			for(int i=0; i<seq.length(); i++){
-				System.out.print(onehot.get(seq.charAt(i)));
+				System.out.print(onehot.get(seq.substring(i, i+1)));
 			}
-			System.out.println("\n");
+			System.out.println("");
 		}
 	}
 	
