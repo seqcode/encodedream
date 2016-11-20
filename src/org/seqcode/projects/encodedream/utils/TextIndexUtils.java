@@ -108,7 +108,7 @@ public class TextIndexUtils {
 				if(!inputRegsIndex.containsKey(ind)){ // if this region is not in "B"
 					String[] outString=line.split("");
 					System.out.print(StringUtils.join(outString, ","));
-					System.out.println("0");
+					System.out.println(",0");
 					numPrinted++;
 				}
 				charstojump = ran.nextInt(TEST_JUMP_MAX)*numCharsInRecord;
