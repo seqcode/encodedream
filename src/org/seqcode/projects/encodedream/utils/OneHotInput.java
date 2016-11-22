@@ -21,6 +21,7 @@ public class OneHotInput {
 	private GenomeConfig gcon;
 	private SequenceGenerator<Region> seqgen;
 	private List<String> testRegsString = new ArrayList<String>();
+	private int win=200;
 	
 	private HashMap<String,String> onehot = new HashMap<String,String>();
 	
@@ -40,6 +41,7 @@ public class OneHotInput {
 		}
 		br.close();
 	}
+	public void setWin(int w){win = w;}
 	
 	@SuppressWarnings("unchecked")
 	public OneHotInput(GenomeConfig g) {
@@ -51,9 +53,9 @@ public class OneHotInput {
 	
 	public void execute(){
 		for(String s : testRegsString){
-			Region reg = rparser.execute(s);
+			Region reg = rparser.execute(s).getMidpoint().expand(win/2);
 			String seq = seqgen.execute(reg).toUpperCase();
-			for(int i=0; i<seq.length(); i++){
+			for(int i=0; i<seq.length()-1; i++){
 				System.out.print(onehot.get(seq.substring(i, i+1)));
 			}
 			System.out.println("");
@@ -65,6 +67,7 @@ public class OneHotInput {
 		OneHotInput onehotcoder = new OneHotInput(g);
 		
 		onehotcoder.loadTestRegionString(Args.parseString(args, "testindex", ""));
+		onehotcoder.setWin(Args.parseInteger(args, "win", 200));
 		onehotcoder.execute();
 		
 	}
