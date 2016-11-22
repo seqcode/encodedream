@@ -28,16 +28,19 @@ public class TextIndexUtils {
 	protected boolean randomSubset = false; // extracts a random subset; when doing this excludes regions from "regions"
 	protected int numRand = 100000;
 	protected boolean fullSet = false; // print all the test set; treating the "regions" as positive and everything else as "U"
-	protected static final int numCharsInRecord = 805;
+	protected int numCharsInRecord = 801;
 	protected static final int NUM_TEST = 60519747;
 	protected static final int TEST_JUMP_MAX = 600;
 	protected Random ran = new Random();
 	protected String onehotFname;
+	protected int win = 200;
 	
-	public TextIndexUtils(GenomeConfig g) {
+	public TextIndexUtils(GenomeConfig g, int w) {
 		gcon = g;
 		rparser = new RegionParser(g.getGenome());
 		pparser = new PointParser(g.getGenome());
+		win = w;
+		numCharsInRecord = win*4+1;
 	}
 	
 	
@@ -144,7 +147,7 @@ public class TextIndexUtils {
 	
 	public static void main(String[] args) throws IOException{
 		GenomeConfig g = new GenomeConfig(args);
-		TextIndexUtils utils = new TextIndexUtils(g);
+		TextIndexUtils utils = new TextIndexUtils(g,Args.parseInteger(args, "win", 200));
 		ArgParser ap = new ArgParser(args);
 		utils.setTestSetIndex(ap.getKeyValue("testInd"));
 		utils.setRegions(ap.getKeyValue("regs"));
