@@ -30,7 +30,7 @@ public class OneHotInput {
 		onehot.put("T", "0100");
 		onehot.put("G", "0010");
 		onehot.put("C", "0001");
-		onehot.put("N", "0001");
+		onehot.put("N", "0000");
 	}
 	
 	public void loadTestRegionString(String file) throws IOException{
