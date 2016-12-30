@@ -170,7 +170,7 @@ public class MakeFinalClassiferData {
 						if(misc_scores!=null){
 							int currFeatInd = 6;
 							for(int f=0; f<misc_scores.length; f++){
-								sb.append(currFeatInd);sb.append(";");sb.append(misc_scores[f][testInd]);sb.append(" ");
+								sb.append(currFeatInd);sb.append(":");sb.append(misc_scores[f][testInd]);sb.append(" ");
 								currFeatInd++;
 							}
 						}
@@ -185,7 +185,7 @@ public class MakeFinalClassiferData {
 						if(misc_scores!=null){
 							int currFeatInd = 5;
 							for(int f=0; f<misc_scores.length; f++){
-								sb.append(currFeatInd);sb.append(";");sb.append(misc_scores[f][testInd]);sb.append(" ");
+								sb.append(currFeatInd);sb.append(":");sb.append(misc_scores[f][testInd]);sb.append(" ");
 								currFeatInd++;
 							}
 						}
@@ -216,7 +216,7 @@ public class MakeFinalClassiferData {
 							if(misc_scores!=null){
 								int currFeatInd = 6;
 								for(int f=0; f<misc_scores.length; f++){
-									sb.append(currFeatInd);sb.append(";");sb.append(misc_scores[f][testInd]);sb.append(" ");
+									sb.append(currFeatInd);sb.append(":");sb.append(misc_scores[f][testInd]);sb.append(" ");
 									currFeatInd++;
 								}
 							}
@@ -233,7 +233,7 @@ public class MakeFinalClassiferData {
 							if(misc_scores!=null){
 								int currFeatInd = 5;
 								for(int f=0; f<misc_scores.length; f++){
-									sb.append(currFeatInd);sb.append(";");sb.append(misc_scores[f][testInd]);sb.append(" ");
+									sb.append(currFeatInd);sb.append(":");sb.append(misc_scores[f][testInd]);sb.append(" ");
 									currFeatInd++;
 								}
 							}
@@ -256,7 +256,7 @@ public class MakeFinalClassiferData {
 					if(misc_scores!=null){
 						int currFeatInd = 6;
 						for(int f=0; f<misc_scores.length; f++){
-							sb.append(currFeatInd);sb.append(";");sb.append(misc_scores[f][testInd]);sb.append(" ");
+							sb.append(currFeatInd);sb.append(":");sb.append(misc_scores[f][testInd]);sb.append(" ");
 							currFeatInd++;
 						}
 					}
@@ -271,7 +271,7 @@ public class MakeFinalClassiferData {
 					if(misc_scores!=null){
 						int currFeatInd = 5;
 						for(int f=0; f<misc_scores.length; f++){
-							sb.append(currFeatInd);sb.append(";");sb.append(misc_scores[f][testInd]);sb.append(" ");
+							sb.append(currFeatInd);sb.append(":");sb.append(misc_scores[f][testInd]);sb.append(" ");
 							currFeatInd++;
 						}
 					}
@@ -312,7 +312,7 @@ public class MakeFinalClassiferData {
 					if(misc_scores!=null){
 						int currFeatInd = 6;
 						for(int f=0; f<misc_scores.length; f++){
-							sb.append(currFeatInd);sb.append(";");sb.append(misc_scores[f][testInd]);sb.append(" ");
+							sb.append(currFeatInd);sb.append(":");sb.append(misc_scores[f][testInd]);sb.append(" ");
 							currFeatInd++;
 						}
 					}
@@ -327,7 +327,7 @@ public class MakeFinalClassiferData {
 					if(misc_scores!=null){
 						int currFeatInd = 5;
 						for(int f=0; f<misc_scores.length; f++){
-							sb.append(currFeatInd);sb.append(";");sb.append(misc_scores[f][testInd]);sb.append(" ");
+							sb.append(currFeatInd);sb.append(":");sb.append(misc_scores[f][testInd]);sb.append(" ");
 							currFeatInd++;
 						}
 					}
