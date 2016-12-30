@@ -24,11 +24,14 @@ public class MakeFinalClassiferData {
 	protected int numRand = 10000;
 	protected int numCelllines = 1;
 	
+	protected int posWeight = 10; // weight for positive examples; 
+	
 	public static final int NUM_TEST = 60519747;
 	public static final int NUM_TRAIN = 51676736;
 	
 	
 	// setteros
+	public void setPosWeight(int w){posWeight=w;}
 	public void setC1Score(String fname) throws IOException{
 		BufferedReader br = new BufferedReader(new FileReader(fname));
 		String line = null;
@@ -171,22 +174,26 @@ public class MakeFinalClassiferData {
 				if(labels[tr][c] == 1){ // if this is bound "B"
 					boundinNone = false;
 					if(hasC3){
-						sb.append(1);sb.append(" "); // label
-						sb.append("1:");sb.append(c1_scores[testInd]);sb.append(" "); // c1-score
-						sb.append("2:");sb.append(c2_scores[testInd]);sb.append(" "); // c2-score
-						sb.append("3:");sb.append(c3_scores[testInd][c]);sb.append(" "); //c3-score
-						sb.append("4:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
-						sb.append("5:");sb.append(dnaseTgas[testInd][c]);sb.append(" "); // dnase-tags
-						sb.append("\n");
-						System.out.print(sb.toString());
+						for(int pw=0; pw<posWeight; pw++){
+							sb.append(1);sb.append(" "); // label
+							sb.append("1:");sb.append(c1_scores[testInd]);sb.append(" "); // c1-score
+							sb.append("2:");sb.append(c2_scores[testInd]);sb.append(" "); // c2-score
+							sb.append("3:");sb.append(c3_scores[testInd][c]);sb.append(" "); //c3-score
+							sb.append("4:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
+							sb.append("5:");sb.append(dnaseTgas[testInd][c]);sb.append(" "); // dnase-tags
+							sb.append("\n");
+							System.out.print(sb.toString());
+						}
 					}else{
-						sb.append(1);sb.append(" "); // label
-						sb.append("1:");sb.append(c1_scores[testInd]);sb.append(" "); // c1-score
-						sb.append("2:");sb.append(c2_scores[testInd]);sb.append(" "); // c2-score
-						sb.append("3:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
-						sb.append("4:");sb.append(dnaseTgas[testInd][c]);sb.append(" "); // dnase-tags
-						sb.append("\n");
-						System.out.print(sb.toString());
+						for(int pw=0; pw<posWeight; pw++){
+							sb.append(1);sb.append(" "); // label
+							sb.append("1:");sb.append(c1_scores[testInd]);sb.append(" "); // c1-score
+							sb.append("2:");sb.append(c2_scores[testInd]);sb.append(" "); // c2-score
+							sb.append("3:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
+							sb.append("4:");sb.append(dnaseTgas[testInd][c]);sb.append(" "); // dnase-tags
+							sb.append("\n");
+							System.out.print(sb.toString());
+						}
 					}
 				}
 			}
@@ -264,6 +271,7 @@ public class MakeFinalClassiferData {
 	public static void main(String[] args) throws IOException{
 		ArgParser ap = new ArgParser(args);
 		MakeFinalClassiferData runner = new MakeFinalClassiferData();
+		runner.setPosWeight(Args.parseInteger(args, "posW", 10));
 		runner.setNumCells(Args.parseInteger(args, "numCells", 1));
 		runner.setHasC3(ap.hasKey("hasC3"));
 		runner.setC1Score(ap.getKeyValue("c1scores")); // c1-scores
