@@ -3,6 +3,7 @@ package org.seqcode.projects.encodedream.utils;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 import org.seqcode.gseutils.ArgParser;
 import org.seqcode.gseutils.Args;
@@ -11,6 +12,10 @@ public class MakeFinalClassiferData {
 	
 	protected double[] c1_scores;
 	protected double[] c2_scores;
+	//any number of other scores will also be added to feature set 
+	// these scores must be specified using the tag "--miscScores"
+	// dims are num_miscScores x NUM_TEST
+	protected double[][] misc_scores; 
 	protected int[] tss_dists;
 	protected double[][] c3_scores;
 	protected double[][] dnaseTgas;
@@ -42,6 +47,19 @@ public class MakeFinalClassiferData {
 			count++;
 		}
 		br.close();
+	}
+	public void setMiscScores(List<String> fnames) throws IOException{
+		misc_scores = new double[fnames.size()][NUM_TEST];
+		for(int f=0;f<fnames.size(); f++){
+			BufferedReader br = new BufferedReader(new FileReader(fnames.get(f)));
+			String line = null;
+			int count=0;
+			while((line=br.readLine())!=null){
+				misc_scores[f][count] = Double.parseDouble(line.trim());
+				count++;
+			}
+			br.close();
+		}
 	}
 	public void setC2Score(String fname) throws IOException{
 		BufferedReader br = new BufferedReader(new FileReader(fname));
@@ -149,6 +167,13 @@ public class MakeFinalClassiferData {
 						sb.append("3:");sb.append(c3_scores[testInd][c]);sb.append(" "); //c3-score
 						sb.append("4:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
 						sb.append("5:");sb.append(dnaseTgas[testInd][c]);sb.append(" "); // dnase-tags
+						if(misc_scores!=null){
+							int currFeatInd = 6;
+							for(int f=0; f<misc_scores.length; f++){
+								sb.append(currFeatInd);sb.append(";");sb.append(misc_scores[f][testInd]);sb.append(" ");
+								currFeatInd++;
+							}
+						}
 						sb.append("\n");
 						System.out.print(sb.toString());
 					}else{
@@ -157,6 +182,13 @@ public class MakeFinalClassiferData {
 						sb.append("2:");sb.append(c2_scores[testInd]);sb.append(" "); // c2-score
 						sb.append("3:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
 						sb.append("4:");sb.append(dnaseTgas[testInd][c]);sb.append(" "); // dnase-tags
+						if(misc_scores!=null){
+							int currFeatInd = 5;
+							for(int f=0; f<misc_scores.length; f++){
+								sb.append(currFeatInd);sb.append(";");sb.append(misc_scores[f][testInd]);sb.append(" ");
+								currFeatInd++;
+							}
+						}
 						sb.append("\n");
 						System.out.print(sb.toString());
 					}
@@ -181,6 +213,13 @@ public class MakeFinalClassiferData {
 							sb.append("3:");sb.append(c3_scores[testInd][c]);sb.append(" "); //c3-score
 							sb.append("4:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
 							sb.append("5:");sb.append(dnaseTgas[testInd][c]);sb.append(" "); // dnase-tags
+							if(misc_scores!=null){
+								int currFeatInd = 6;
+								for(int f=0; f<misc_scores.length; f++){
+									sb.append(currFeatInd);sb.append(";");sb.append(misc_scores[f][testInd]);sb.append(" ");
+									currFeatInd++;
+								}
+							}
 							sb.append("\n");
 							System.out.print(sb.toString());
 						}
@@ -191,6 +230,13 @@ public class MakeFinalClassiferData {
 							sb.append("2:");sb.append(c2_scores[testInd]);sb.append(" "); // c2-score
 							sb.append("3:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
 							sb.append("4:");sb.append(dnaseTgas[testInd][c]);sb.append(" "); // dnase-tags
+							if(misc_scores!=null){
+								int currFeatInd = 5;
+								for(int f=0; f<misc_scores.length; f++){
+									sb.append(currFeatInd);sb.append(";");sb.append(misc_scores[f][testInd]);sb.append(" ");
+									currFeatInd++;
+								}
+							}
 							sb.append("\n");
 							System.out.print(sb.toString());
 						}
@@ -207,6 +253,13 @@ public class MakeFinalClassiferData {
 					sb.append("3:");sb.append(c3_scores[testInd][randCellInd]);sb.append(" "); //c3-score
 					sb.append("4:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
 					sb.append("5:");sb.append(dnaseTgas[testInd][randCellInd]);sb.append(" "); // dnase-tags
+					if(misc_scores!=null){
+						int currFeatInd = 6;
+						for(int f=0; f<misc_scores.length; f++){
+							sb.append(currFeatInd);sb.append(";");sb.append(misc_scores[f][testInd]);sb.append(" ");
+							currFeatInd++;
+						}
+					}
 					sb.append("\n");
 					System.out.print(sb.toString());
 				}else{
@@ -215,6 +268,13 @@ public class MakeFinalClassiferData {
 					sb.append("2:");sb.append(c2_scores[testInd]);sb.append(" "); // c2-score
 					sb.append("3:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
 					sb.append("4:");sb.append(dnaseTgas[testInd][randCellInd]);sb.append(" "); // dnase-tags
+					if(misc_scores!=null){
+						int currFeatInd = 5;
+						for(int f=0; f<misc_scores.length; f++){
+							sb.append(currFeatInd);sb.append(";");sb.append(misc_scores[f][testInd]);sb.append(" ");
+							currFeatInd++;
+						}
+					}
 					sb.append("\n");
 					System.out.print(sb.toString());
 				}
@@ -249,6 +309,13 @@ public class MakeFinalClassiferData {
 					sb.append("3:");sb.append(c3_scores[testInd][randCellInd]);sb.append(" "); //c3-score
 					sb.append("4:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
 					sb.append("5:");sb.append(dnaseTgas[testInd][randCellInd]);sb.append(" "); // dnase-tags
+					if(misc_scores!=null){
+						int currFeatInd = 6;
+						for(int f=0; f<misc_scores.length; f++){
+							sb.append(currFeatInd);sb.append(";");sb.append(misc_scores[f][testInd]);sb.append(" ");
+							currFeatInd++;
+						}
+					}
 					sb.append("\n");
 					System.out.print(sb.toString());
 				}else{
@@ -257,6 +324,13 @@ public class MakeFinalClassiferData {
 					sb.append("2:");sb.append(c2_scores[testInd]);sb.append(" "); // c2-score
 					sb.append("3:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
 					sb.append("4:");sb.append(dnaseTgas[testInd][randCellInd]);sb.append(" "); // dnase-tags
+					if(misc_scores!=null){
+						int currFeatInd = 5;
+						for(int f=0; f<misc_scores.length; f++){
+							sb.append(currFeatInd);sb.append(";");sb.append(misc_scores[f][testInd]);sb.append(" ");
+							currFeatInd++;
+						}
+					}
 					sb.append("\n");
 					System.out.print(sb.toString());
 				}
@@ -278,6 +352,9 @@ public class MakeFinalClassiferData {
 		runner.setC2Score(ap.getKeyValue("c2scores")); // c2-scores
 		if(ap.hasKey("hasC3")){
 			runner.setC3Scores(ap.getKeyValue("c3scores")); //c3-scores
+		}
+		if(ap.hasKey("miscScores")){
+			runner.setMiscScores(Args.parseList(args, "miscScores"));
 		}
 		runner.setTSSdist(ap.getKeyValue("tssDistances")); // tss distances
 		runner.setDnaseTags(ap.getKeyValue("dnaseTags")); // dnase tags
