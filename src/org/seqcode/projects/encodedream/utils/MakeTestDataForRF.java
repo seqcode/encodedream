@@ -17,7 +17,7 @@ public class MakeTestDataForRF {
 	protected double[] dnaseTgas;
 	// dnase tag counts in a shorter window, eg:- 50bp;
 	// This is a simple hack to learn a footprint
-	protected double[][] dnaseTagsShort;
+	protected double[] dnaseTagsShort;
 	protected double[][] misc_scores;
 
 	protected int[] testIndAtLeaderboard;
@@ -102,7 +102,7 @@ public class MakeTestDataForRF {
 	public void setDnaseTagsShort(String fname) throws IOException{
 		BufferedReader br = new BufferedReader(new FileReader(fname));
 		String line = null;
-		dnaseTgas = new double[NUM_TEST];
+		dnaseTagsShort = new double[NUM_TEST];
 		int count=0;
 		while((line=br.readLine())!=null){
 			dnaseTgas[count] = Double.parseDouble(line);
