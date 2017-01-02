@@ -15,6 +15,9 @@ public class MakeTestDataForRF {
 	protected int[] tss_dists;
 	protected double[] c3_scores;
 	protected double[] dnaseTgas;
+	// dnase tag counts in a shorter window, eg:- 50bp;
+	// This is a simple hack to learn a footprint
+	protected double[][] dnaseTagsShort;
 	protected double[][] misc_scores;
 
 	protected int[] testIndAtLeaderboard;
@@ -96,6 +99,17 @@ public class MakeTestDataForRF {
 		}
 		br.close();
 	}
+	public void setDnaseTagsShort(String fname) throws IOException{
+		BufferedReader br = new BufferedReader(new FileReader(fname));
+		String line = null;
+		dnaseTgas = new double[NUM_TEST];
+		int count=0;
+		while((line=br.readLine())!=null){
+			dnaseTgas[count] = Double.parseDouble(line);
+			count++;
+		}
+		br.close();
+	}
 	public void setLeaderboardTestIndMap(String fname) throws IOException{
 		BufferedReader br = new BufferedReader(new FileReader(fname));
 		String line = null;
@@ -121,8 +135,11 @@ public class MakeTestDataForRF {
 				sb.append("3:");sb.append(c3_scores[te]);sb.append(" "); //c3-score
 				sb.append("4:");sb.append(tss_dists[te]);sb.append(" "); // tss-dist
 				sb.append("5:");sb.append(dnaseTgas[te]);sb.append(" "); // dnase-tags
+				if(dnaseTagsShort!=null){
+					sb.append("6:");sb.append(dnaseTagsShort[te]);sb.append(" "); // dnase-tags
+				}
 				if(misc_scores!=null){
-					int currFeatInd = 6;
+					int currFeatInd = (dnaseTagsShort!=null) ?  7 : 6;
 					for(int f=0; f<misc_scores.length; f++){
 						sb.append(currFeatInd);sb.append(":");sb.append(misc_scores[f][te]);sb.append(" ");
 						currFeatInd++;
@@ -136,8 +153,11 @@ public class MakeTestDataForRF {
 				sb.append("2:");sb.append(c2_scores[te]);sb.append(" "); // c2-score
 				sb.append("3:");sb.append(tss_dists[te]);sb.append(" "); // tss-dist
 				sb.append("4:");sb.append(dnaseTgas[te]);sb.append(" "); // dnase-tags
+				if(dnaseTagsShort!=null){
+					sb.append("5:");sb.append(dnaseTagsShort[te]);sb.append(" "); // dnase-tags
+				}
 				if(misc_scores!=null){
-					int currFeatInd = 5;
+					int currFeatInd = (dnaseTagsShort!=null) ?  6 : 5;
 					for(int f=0; f<misc_scores.length; f++){
 						sb.append(currFeatInd);sb.append(":");sb.append(misc_scores[f][te]);sb.append(" ");
 						currFeatInd++;
@@ -160,8 +180,11 @@ public class MakeTestDataForRF {
 				sb.append("3:");sb.append(c3_scores[testInd]);sb.append(" "); //c3-score
 				sb.append("4:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
 				sb.append("5:");sb.append(dnaseTgas[testInd]);sb.append(" "); // dnase-tags
+				if(dnaseTagsShort!=null){
+					sb.append("6:");sb.append(dnaseTagsShort[testInd]);sb.append(" "); // dnase-tags
+				}
 				if(misc_scores!=null){
-					int currFeatInd = 6;
+					int currFeatInd = (dnaseTagsShort!=null) ?  7 : 6;
 					for(int f=0; f<misc_scores.length; f++){
 						sb.append(currFeatInd);sb.append(":");sb.append(misc_scores[f][testInd]);sb.append(" ");
 						currFeatInd++;
@@ -175,8 +198,11 @@ public class MakeTestDataForRF {
 				sb.append("2:");sb.append(c2_scores[testInd]);sb.append(" "); // c2-score
 				sb.append("3:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
 				sb.append("4:");sb.append(dnaseTgas[testInd]);sb.append(" "); // dnase-tags
+				if(dnaseTagsShort!=null){
+					sb.append("5:");sb.append(dnaseTagsShort[testInd]);sb.append(" "); // dnase-tags
+				}
 				if(misc_scores!=null){
-					int currFeatInd = 5;
+					int currFeatInd = (dnaseTagsShort!=null) ?  6 : 5;
 					for(int f=0; f<misc_scores.length; f++){
 						sb.append(currFeatInd);sb.append(":");sb.append(misc_scores[f][testInd]);sb.append(" ");
 						currFeatInd++;
@@ -204,6 +230,9 @@ public class MakeTestDataForRF {
 			runner.setC3Scores(ap.getKeyValue("c3scores")); //c3-scores
 		runner.setTSSdist(ap.getKeyValue("tssDistances")); // tss distances
 		runner.setDnaseTags(ap.getKeyValue("dnaseTags")); // dnase tags
+		if(ap.hasKey("dnaseTagsShort")){
+			runner.setDnaseTagsShort(ap.getKeyValue("dnaseTagsShort"));
+		}
 		if(!ap.hasKey("istest")){
 			runner.setLeaderboardTestIndMap(ap.getKeyValue("leaderboardTestMap"));
 			runner.executeLeaderBoard();

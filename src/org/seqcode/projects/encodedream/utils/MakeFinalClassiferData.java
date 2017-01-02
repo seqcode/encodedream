@@ -18,7 +18,12 @@ public class MakeFinalClassiferData {
 	protected double[][] misc_scores; 
 	protected int[] tss_dists;
 	protected double[][] c3_scores;
+	// dnase tag counts in a larger window, eg:- 600bp
 	protected double[][] dnaseTgas;
+	
+	// dnase tag counts in a shorter window, eg:- 50bp;
+	// This is a simple hack to learn a footprint
+	protected double[][] dnaseTagsShort;
 	
 	protected int[][] labels; // based on train-index
 	protected int[] testIndAtTrain;
@@ -111,6 +116,20 @@ public class MakeFinalClassiferData {
 		}
 		br.close();
 	}
+	public void setDnaseTagsShort(String fname) throws IOException{
+		BufferedReader br = new BufferedReader(new FileReader(fname));
+		String line = null;
+		dnaseTagsShort = new double[NUM_TEST][numCelllines];
+		int count=0;
+		while((line=br.readLine())!=null){
+			String[] pieces = line.split("\t");
+			for(int p=0; p<pieces.length; p++){
+				dnaseTagsShort[count][p] = Double.parseDouble(pieces[p]);
+			}
+			count++;
+		}
+		br.close();
+	}
 	public void setLabels(String fname) throws IOException{
 		BufferedReader br = new BufferedReader(new FileReader(fname));
 		String line = null;
@@ -167,8 +186,11 @@ public class MakeFinalClassiferData {
 						sb.append("3:");sb.append(c3_scores[testInd][c]);sb.append(" "); //c3-score
 						sb.append("4:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
 						sb.append("5:");sb.append(dnaseTgas[testInd][c]);sb.append(" "); // dnase-tags
+						if(dnaseTagsShort!=null){
+							sb.append("6:");sb.append(dnaseTagsShort[testInd][c]);sb.append(" "); // dnase-tags
+						}
 						if(misc_scores!=null){
-							int currFeatInd = 6;
+							int currFeatInd = (dnaseTagsShort!=null) ?  7 : 6;
 							for(int f=0; f<misc_scores.length; f++){
 								sb.append(currFeatInd);sb.append(":");sb.append(misc_scores[f][testInd]);sb.append(" ");
 								currFeatInd++;
@@ -182,8 +204,11 @@ public class MakeFinalClassiferData {
 						sb.append("2:");sb.append(c2_scores[testInd]);sb.append(" "); // c2-score
 						sb.append("3:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
 						sb.append("4:");sb.append(dnaseTgas[testInd][c]);sb.append(" "); // dnase-tags
+						if(dnaseTagsShort!=null){
+							sb.append("5:");sb.append(dnaseTagsShort[testInd][c]);sb.append(" "); // dnase-tags
+						}
 						if(misc_scores!=null){
-							int currFeatInd = 5;
+							int currFeatInd = (dnaseTagsShort!=null) ?  6 : 5;
 							for(int f=0; f<misc_scores.length; f++){
 								sb.append(currFeatInd);sb.append(":");sb.append(misc_scores[f][testInd]);sb.append(" ");
 								currFeatInd++;
@@ -213,8 +238,11 @@ public class MakeFinalClassiferData {
 							sb.append("3:");sb.append(c3_scores[testInd][c]);sb.append(" "); //c3-score
 							sb.append("4:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
 							sb.append("5:");sb.append(dnaseTgas[testInd][c]);sb.append(" "); // dnase-tags
+							if(dnaseTagsShort!=null){
+								sb.append("6:");sb.append(dnaseTagsShort[testInd][c]);sb.append(" "); // dnase-tags
+							}
 							if(misc_scores!=null){
-								int currFeatInd = 6;
+								int currFeatInd = (dnaseTagsShort!=null) ?  7 : 6;
 								for(int f=0; f<misc_scores.length; f++){
 									sb.append(currFeatInd);sb.append(":");sb.append(misc_scores[f][testInd]);sb.append(" ");
 									currFeatInd++;
@@ -230,8 +258,11 @@ public class MakeFinalClassiferData {
 							sb.append("2:");sb.append(c2_scores[testInd]);sb.append(" "); // c2-score
 							sb.append("3:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
 							sb.append("4:");sb.append(dnaseTgas[testInd][c]);sb.append(" "); // dnase-tags
+							if(dnaseTagsShort!=null){
+								sb.append("5:");sb.append(dnaseTagsShort[testInd][c]);sb.append(" "); // dnase-tags
+							}
 							if(misc_scores!=null){
-								int currFeatInd = 5;
+								int currFeatInd = (dnaseTagsShort!=null) ?  6 : 5;
 								for(int f=0; f<misc_scores.length; f++){
 									sb.append(currFeatInd);sb.append(":");sb.append(misc_scores[f][testInd]);sb.append(" ");
 									currFeatInd++;
@@ -253,8 +284,11 @@ public class MakeFinalClassiferData {
 					sb.append("3:");sb.append(c3_scores[testInd][randCellInd]);sb.append(" "); //c3-score
 					sb.append("4:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
 					sb.append("5:");sb.append(dnaseTgas[testInd][randCellInd]);sb.append(" "); // dnase-tags
+					if(dnaseTagsShort!=null){
+						sb.append("6:");sb.append(dnaseTagsShort[testInd][randCellInd]);sb.append(" "); // dnase-tags
+					}
 					if(misc_scores!=null){
-						int currFeatInd = 6;
+						int currFeatInd = (dnaseTagsShort!=null) ?  7 : 6;
 						for(int f=0; f<misc_scores.length; f++){
 							sb.append(currFeatInd);sb.append(":");sb.append(misc_scores[f][testInd]);sb.append(" ");
 							currFeatInd++;
@@ -268,8 +302,11 @@ public class MakeFinalClassiferData {
 					sb.append("2:");sb.append(c2_scores[testInd]);sb.append(" "); // c2-score
 					sb.append("3:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
 					sb.append("4:");sb.append(dnaseTgas[testInd][randCellInd]);sb.append(" "); // dnase-tags
+					if(dnaseTagsShort!=null){
+						sb.append("5:");sb.append(dnaseTagsShort[testInd][randCellInd]);sb.append(" "); // dnase-tags
+					}
 					if(misc_scores!=null){
-						int currFeatInd = 5;
+						int currFeatInd = (dnaseTagsShort!=null) ?  6 : 5;
 						for(int f=0; f<misc_scores.length; f++){
 							sb.append(currFeatInd);sb.append(":");sb.append(misc_scores[f][testInd]);sb.append(" ");
 							currFeatInd++;
@@ -309,8 +346,11 @@ public class MakeFinalClassiferData {
 					sb.append("3:");sb.append(c3_scores[testInd][randCellInd]);sb.append(" "); //c3-score
 					sb.append("4:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
 					sb.append("5:");sb.append(dnaseTgas[testInd][randCellInd]);sb.append(" "); // dnase-tags
+					if(dnaseTagsShort!=null){
+						sb.append("6:");sb.append(dnaseTagsShort[testInd][randCellInd]);sb.append(" "); // dnase-tags
+					}
 					if(misc_scores!=null){
-						int currFeatInd = 6;
+						int currFeatInd = (dnaseTagsShort!=null) ?  7 : 6;
 						for(int f=0; f<misc_scores.length; f++){
 							sb.append(currFeatInd);sb.append(":");sb.append(misc_scores[f][testInd]);sb.append(" ");
 							currFeatInd++;
@@ -324,8 +364,11 @@ public class MakeFinalClassiferData {
 					sb.append("2:");sb.append(c2_scores[testInd]);sb.append(" "); // c2-score
 					sb.append("3:");sb.append(tss_dists[testInd]);sb.append(" "); // tss-dist
 					sb.append("4:");sb.append(dnaseTgas[testInd][randCellInd]);sb.append(" "); // dnase-tags
+					if(dnaseTagsShort!=null){
+						sb.append("5:");sb.append(dnaseTagsShort[testInd][randCellInd]);sb.append(" "); // dnase-tags
+					}
 					if(misc_scores!=null){
-						int currFeatInd = 5;
+						int currFeatInd = (dnaseTagsShort!=null) ?  6 : 5;
 						for(int f=0; f<misc_scores.length; f++){
 							sb.append(currFeatInd);sb.append(":");sb.append(misc_scores[f][testInd]);sb.append(" ");
 							currFeatInd++;
@@ -358,6 +401,9 @@ public class MakeFinalClassiferData {
 		}
 		runner.setTSSdist(ap.getKeyValue("tssDistances")); // tss distances
 		runner.setDnaseTags(ap.getKeyValue("dnaseTags")); // dnase tags
+		if(ap.hasKey("dnaseTagsShort")){
+			runner.setDnaseTagsShort(ap.getKeyValue("dnaseTagsShort"));
+		}
 		runner.setLabels(ap.getKeyValue("labels")); //labels
 		runner.setTrainTestIndMap(ap.getKeyValue("trainTestMap"));
 		runner.setNumRand(Args.parseInteger(args, "numRand", 10000)); //num
