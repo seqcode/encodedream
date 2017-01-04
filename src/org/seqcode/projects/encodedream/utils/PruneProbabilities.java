@@ -12,9 +12,11 @@ public class PruneProbabilities {
 	protected double[] input_vec;
 	public static final int NUM_TEST = 60519747;
 	public static final int NUM_LEADERBOARD = 8843011;
+	public static final int NUM_TRAIN = 51676736;
 	
 	protected int[] dnasePeakCalls;
 	protected int[] testIndAtLeaderboard;
+	protected int[] testIndAtTrain;
 	
 	protected int span_bin = 3;
 	
@@ -56,6 +58,17 @@ public class PruneProbabilities {
 		}
 		br.close();
 	}
+	public void loadInputVecTrain(String fname) throws NumberFormatException, IOException{
+		BufferedReader br = new BufferedReader(new FileReader(fname));
+		String line = null;
+		input_vec = new double[NUM_TRAIN];
+		int count=0;
+		while((line=br.readLine())!=null){
+			input_vec[count] = Double.parseDouble(line.trim());
+			count++;
+		}
+		br.close();
+	}
 	public void setBinspan(int w){span_bin=w;}
 	public void setLeaderboardTestIndMap(String fname) throws IOException{
 		BufferedReader br = new BufferedReader(new FileReader(fname));
@@ -64,6 +77,17 @@ public class PruneProbabilities {
 		int count=0;
 		while((line=br.readLine())!=null){
 			testIndAtLeaderboard[count] = Integer.parseInt(line.trim().split("\t")[1]);
+			count++;
+		}
+		br.close();
+	}
+	public void setTrainTestIndMap(String fname) throws IOException{
+		BufferedReader br = new BufferedReader(new FileReader(fname));
+		String line = null;
+		testIndAtTrain = new int[NUM_TRAIN];
+		int count=0;
+		while((line=br.readLine())!=null){
+			testIndAtTrain[count] = Integer.parseInt(line.trim().split("\t")[1]);
 			count++;
 		}
 		br.close();
@@ -90,8 +114,32 @@ public class PruneProbabilities {
 		}
 	}
 	
+	public void factorOutInaccessibleTrain(){
+		for(int i=0; i<NUM_TRAIN; i++){ // roll over the file
+			int testInd = testIndAtTrain[i];
+			if(dnasePeakCalls[testInd] == 0){
+				System.out.println(0);
+			}else{
+				System.out.println(input_vec[i]);
+			}
+		}
+	}
+	
 	public void executeTEST(){
 		for(int i=0; i<NUM_TEST; i++){ // roll over the file
+			int span_begin = Math.max(0, i-((span_bin-1)/2));
+			int span_end =  Math.min(NUM_TEST-1, i+((span_bin-1)/2));
+			double max=0.0;
+			for(int s=span_begin ; s<=span_end; s++){
+				if(max<input_vec[s])
+					max = input_vec[s];
+			}
+			System.out.println(max);
+		}	
+	}
+	
+	public void executeTRAIN(){
+		for(int i=0; i<NUM_TRAIN; i++){ // roll over the file
 			int span_begin = Math.max(0, i-((span_bin-1)/2));
 			int span_end =  Math.min(NUM_TEST-1, i+((span_bin-1)/2));
 			double max=0.0;
@@ -129,7 +177,7 @@ public class PruneProbabilities {
 				runner.setDnasePeakCalls(ap.getKeyValue("dnasePeakCalls"));
 				runner.factorOutInaccessibleTest();
 			}
-		}else{
+		}else if(ap.hasKey("isLBoard")){
 			
 			runner.loadInputVecLeaderboard(Args.parseString(args,"inputVec", ""));
 			if(ap.hasKey("prune"))
@@ -140,6 +188,13 @@ public class PruneProbabilities {
 				runner.factorOutInaccessibleLeaderBoard();
 			}
 				
+		}else if(ap.hasKey("isTrain")){
+			runner.loadInputVecTrain(Args.parseString(args,"inputVec", ""));
+			if(ap.hasKey("factorOutInacc")){
+				runner.setTrainTestIndMap(ap.getKeyValue("TrainTestMap"));
+				runner.setDnasePeakCalls(ap.getKeyValue("dnasePeakCalls"));
+				runner.factorOutInaccessibleTrain();
+			}
 		}
 	}
 
