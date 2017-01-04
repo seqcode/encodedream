@@ -28,6 +28,8 @@ public class MakeFinalClassiferData {
 	protected int[][] labels; // based on train-index
 	protected int[] testIndAtTrain;
 	
+	// Zeros and Ones, indicating presence of Dnase domains or not. 
+	protected int[][] dnasePeakCalls;	
 	
 	protected boolean genNeg = false;
 	protected boolean hasC3 = false;
@@ -130,6 +132,20 @@ public class MakeFinalClassiferData {
 		}
 		br.close();
 	}
+	public void setDnasePeakCalls(String fname) throws IOException{
+		BufferedReader br = new BufferedReader(new FileReader(fname));
+		String line = null;
+		dnasePeakCalls = new int[NUM_TEST][numCelllines];
+		int count=0;
+		while((line=br.readLine())!=null){
+			String[] pieces = line.split("\t");
+			for(int p=0; p<pieces.length; p++){
+				dnasePeakCalls[count][p] = Integer.parseInt(pieces[p]);
+			}
+			count++;
+		}
+		br.close();
+	}
 	public void setLabels(String fname) throws IOException{
 		BufferedReader br = new BufferedReader(new FileReader(fname));
 		String line = null;
@@ -177,6 +193,8 @@ public class MakeFinalClassiferData {
 		for(int tr = 0; tr<labels.length; tr++){ // over all train regions
 			int testInd = testIndAtTrain[tr];
 			for(int c=0; c<labels[0].length; c++){ // over all cell-lines
+				if(dnasePeakCalls !=null  && dnasePeakCalls[testInd][c] == 0)
+					continue;
 				StringBuilder sb = new StringBuilder();
 				if(labels[tr][c] == 1){ // if this is bound "B"
 					if(hasC3){
@@ -227,6 +245,8 @@ public class MakeFinalClassiferData {
 			int testInd = testIndAtTrain[tr];
 			boolean boundinNone = true;
 			for(int c=0; c<labels[0].length; c++){ // over all cell-lines
+				if(dnasePeakCalls !=null  && dnasePeakCalls[testInd][c] == 0)
+					continue;
 				StringBuilder sb = new StringBuilder();
 				if(labels[tr][c] == 1){ // if this is bound "B"
 					boundinNone = false;
@@ -329,6 +349,7 @@ public class MakeFinalClassiferData {
 		while(count <= numRand){
 			int trainInd = min+(int)(Math.random()*(max));
 			int testInd = testIndAtTrain[trainInd];
+			
 			boolean unbound = true;
 			for(int c=0; c<labels[0].length; c++){
 				if(labels[trainInd][c] == 1){
@@ -337,8 +358,11 @@ public class MakeFinalClassiferData {
 				}
 			}
 			if(unbound){
+				
 				StringBuilder sb = new StringBuilder();
 				int randCellInd = 0 + (int)(Math.random()*(labels[0].length));
+				if(dnasePeakCalls !=null  && dnasePeakCalls[testInd][randCellInd] == 0)
+					continue;
 				if(hasC3){
 					sb.append(0);sb.append(" "); // label
 					sb.append("1:");sb.append(c1_scores[testInd]);sb.append(" "); // c1-score
@@ -398,6 +422,9 @@ public class MakeFinalClassiferData {
 		}
 		if(ap.hasKey("miscScores")){
 			runner.setMiscScores(Args.parseList(args, "miscScores"));
+		}
+		if(ap.hasKey("dnasePeakCalls")){
+			runner.setDnasePeakCalls(ap.getKeyValue("dnasePeakCalls"));
 		}
 		runner.setTSSdist(ap.getKeyValue("tssDistances")); // tss distances
 		runner.setDnaseTags(ap.getKeyValue("dnaseTags")); // dnase tags
