@@ -74,7 +74,7 @@ public class MakeTrainForLogitRF {
 			int testInd = testIndAtTrain[tr];
 			if(dnasePeaksAtTest[testInd] ==1){
 				StringBuilder sb =new StringBuilder();
-				sb.append(dnasePeaksAtTest[testInd]);sb.append("\t");sb.append("U");
+				sb.append(coordinateStringsTest[testInd]);sb.append("\t");sb.append("U");
 				System.out.println(sb.toString());
 			}
 		}
