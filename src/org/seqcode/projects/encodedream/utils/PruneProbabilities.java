@@ -94,8 +94,9 @@ public class PruneProbabilities {
 	}
 	
 	public void addNoice(){
-		double randPlus = Math.random()/100;
+		
 		for(int i=0; i<input_vec.length; i++){
+			double randPlus = Math.random()/100;
 			if(input_vec[i]==0){
 				input_vec[i] = input_vec[i]+randPlus;
 			}else if(input_vec[i] ==1){
