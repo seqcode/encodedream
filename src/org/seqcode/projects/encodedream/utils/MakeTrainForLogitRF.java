@@ -68,6 +68,18 @@ public class MakeTrainForLogitRF {
 		br.close();
 	}
 	
+	public void executeAllAcc(){
+		// roll down the "tfPeaksAtTrain" file
+		for(int tr=0; tr<NUM_TRAIN; tr++){
+			int testInd = testIndAtTrain[tr];
+			if(dnasePeaksAtTest[testInd] ==1){
+				StringBuilder sb =new StringBuilder();
+				sb.append(dnasePeaksAtTest[testInd]);sb.append("\t");sb.append("U");
+				System.out.println(sb.toString());
+			}
+		}
+	}
+
 	public void execute(){
 		// roll down the "tfPeaksAtTrain" file
 		for(int tr=0; tr<NUM_TRAIN; tr++){
@@ -87,11 +99,17 @@ public class MakeTrainForLogitRF {
 	public static void main(String[] args) throws NumberFormatException, IOException{
 		MakeTrainForLogitRF runner = new MakeTrainForLogitRF();
 		ArgParser ap = new ArgParser(args);
-		runner.setDnasePeaksAtTest(ap.getKeyValue("dnasePeaksAtTest"));
-		runner.setTfPeaksAtTrain(ap.getKeyValue("tfPeaksAtTrain"));
 		runner.setCoordinateStringsTest(ap.getKeyValue("testCoordInd"));
 		runner.setTrainTestIndMap(ap.getKeyValue("testIndAtTrain"));
+		runner.setDnasePeaksAtTest(ap.getKeyValue("dnasePeaksAtTest"));
+		if(ap.hasKey("atAllAcc")){
+			runner.executeAllAcc();
+			System.exit(0);
+		}
+		runner.setTfPeaksAtTrain(ap.getKeyValue("tfPeaksAtTrain"));
+		
 		runner.execute();
+		
 	}
 	
 	
