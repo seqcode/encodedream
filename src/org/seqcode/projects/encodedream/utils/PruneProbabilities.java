@@ -190,6 +190,7 @@ public class PruneProbabilities {
 				runner.loadInputVecTrain(ap.getKeyValue("isTrain"));
 			
 			runner.addNoice();
+			System.exit(0);
 		}
 		
 		if(ap.hasKey("isTest")){
