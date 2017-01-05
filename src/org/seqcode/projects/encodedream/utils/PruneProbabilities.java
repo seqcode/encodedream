@@ -93,6 +93,18 @@ public class PruneProbabilities {
 		br.close();
 	}
 	
+	public void addNoice(){
+		double randPlus = Math.random()/100;
+		for(int i=0; i<input_vec.length; i++){
+			if(input_vec[i]==0){
+				input_vec[i] = input_vec[i]+randPlus;
+			}else if(input_vec[i] ==1){
+				input_vec[i] = input_vec[i]-randPlus;
+			}
+			System.out.println(input_vec[i]);
+		}
+	}
+	
 	public void factorOutInaccessibleTest(){
 		for(int i=0; i<NUM_TEST; i++){ // roll over the file
 			if(dnasePeakCalls[i] == 0){
@@ -168,6 +180,17 @@ public class PruneProbabilities {
 		ArgParser ap = new ArgParser(args);
 		PruneProbabilities runner = new PruneProbabilities();
 		runner.setBinspan(Args.parseInteger(args, "binspan", 3));
+		
+		if(ap.hasKey("addNoise")){
+			if(ap.hasKey("isTest"))
+				runner.loadInputVecTest(ap.getKeyValue("isTest"));
+			if(ap.hasKey("isLBoard"))
+				runner.loadInputVecLeaderboard(ap.getKeyValue("isLBoard"));
+			if(ap.hasKey("isTrain"))
+				runner.loadInputVecTrain(ap.getKeyValue("isTrain"));
+			
+			runner.addNoice();
+		}
 		
 		if(ap.hasKey("isTest")){
 			runner.loadInputVecTest(Args.parseString(args,"inputVec", ""));
